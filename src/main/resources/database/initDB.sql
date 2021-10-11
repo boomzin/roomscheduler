@@ -1,4 +1,5 @@
-DROP TABLE IF EXISTS user_roles;
+-- CREATE EXTENSION btree_gist;
+DROP TABLE IF EXISTS user_role;
 DROP TABLE IF EXISTS room CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS event;
@@ -15,11 +16,11 @@ CREATE TABLE users
 );
 CREATE UNIQUE INDEX users_unique_email_idx ON users (email);
 
-CREATE TABLE user_roles
+CREATE TABLE user_role
 (
     user_id INTEGER NOT NULL,
     role    VARCHAR,
-    CONSTRAINT user_roles_idx UNIQUE (user_id, role),
+    CONSTRAINT user_role_idx UNIQUE (user_id, role),
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
@@ -37,11 +38,13 @@ CREATE TABLE event
 (
     id                  INTEGER PRIMARY KEY DEFAULT nextval('global_seq'),
     description         VARCHAR                             NOT NULL,
-    start_event         TIMESTAMP                           NOT NULL,
-    end_event           TIMESTAMP                           NOT NULL,
+--     start_event         TIMESTAMP                           NOT NULL,
+--     end_event           TIMESTAMP                           NOT NULL,
     is_accepted         BOOLEAN             DEFAULT FALSE   NOT NULL,
     room_id             INTEGER                             NOT NULL,
     user_id             INTEGER                             NOT NULL,
+    duration            tsrange                             NOT NULL,
+    EXCLUDE USING GIST (room_id WITH =, duration WITH &&) WHERE (is_accepted),
     FOREIGN KEY (room_id) REFERENCES room (id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
