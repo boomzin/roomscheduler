@@ -1,11 +1,13 @@
 package com.example.roomscheduler.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
-@Table(name = "rooms")
+@Table(name = "room")
 public class Room extends AbstractBaseEntity {
 
     @Column(name = "description", nullable = false, unique = true)
@@ -19,4 +21,8 @@ public class Room extends AbstractBaseEntity {
 
     @Column(name = "is_has_white_board")
     private boolean isHasWhiteBoard;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "room")
+    @OrderBy("start ASC")
+    private List<Event> events;
 }

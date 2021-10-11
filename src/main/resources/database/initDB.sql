@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS user_roles;
-DROP TABLE IF EXISTS rooms;
-DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS room CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS event;
 DROP SEQUENCE IF EXISTS global_seq;
 
 CREATE SEQUENCE global_seq START WITH 100000;
@@ -22,7 +23,7 @@ CREATE TABLE user_roles
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
-CREATE TABLE rooms
+CREATE TABLE room
 (
     id                  INTEGER PRIMARY KEY DEFAULT nextval('global_seq'),
     description         VARCHAR                             NOT NULL,
@@ -30,5 +31,18 @@ CREATE TABLE rooms
     is_has_projector    BOOLEAN             DEFAULT FALSE   NOT NULL,
     is_has_white_board  BOOLEAN             DEFAULT FALSE   NOT NULL
 );
-CREATE UNIQUE INDEX room_unique_description_idx ON rooms (description);
+CREATE UNIQUE INDEX room_unique_description_idx ON room (description);
+
+CREATE TABLE event
+(
+    id                  INTEGER PRIMARY KEY DEFAULT nextval('global_seq'),
+    description         VARCHAR                             NOT NULL,
+    start_event         TIMESTAMP                           NOT NULL,
+    end_event           TIMESTAMP                           NOT NULL,
+    is_accepted         BOOLEAN             DEFAULT FALSE   NOT NULL,
+    room_id             INTEGER                             NOT NULL,
+    user_id             INTEGER                             NOT NULL,
+    FOREIGN KEY (room_id) REFERENCES room (id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
 
