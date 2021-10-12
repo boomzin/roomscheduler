@@ -1,13 +1,14 @@
 package com.example.roomscheduler.model;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.Getter;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "room")
+@Getter
 public class Room extends AbstractBaseEntity {
 
     @Column(name = "description", nullable = false, unique = true)
@@ -23,6 +24,6 @@ public class Room extends AbstractBaseEntity {
     private boolean isHasWhiteBoard;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "room")
-    @OrderBy("start ASC")
+    @JsonManagedReference(value = "roomEvents")
     private List<Event> events;
 }

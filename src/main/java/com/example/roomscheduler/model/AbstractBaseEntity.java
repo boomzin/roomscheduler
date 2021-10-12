@@ -1,9 +1,12 @@
 package com.example.roomscheduler.model;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 
 @MappedSuperclass
 @Access(AccessType.FIELD)
+@Getter
 public abstract class AbstractBaseEntity {
     public static final int START_SEQ = 100000;
 

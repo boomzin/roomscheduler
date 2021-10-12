@@ -1,5 +1,7 @@
 package com.example.roomscheduler.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.Getter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -9,6 +11,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
+@Getter
 public class User extends AbstractBaseEntity{
 
     @Column(name = "name", nullable = false)
@@ -21,8 +24,8 @@ public class User extends AbstractBaseEntity{
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
-            uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role"}, name = "uk_user_roles")})
+    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
+            uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role"}, name = "uk_user_role")})
     @Column(name = "role")
     @ElementCollection(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
@@ -30,8 +33,10 @@ public class User extends AbstractBaseEntity{
     private Set<Role> roles;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    @OrderBy("start ASC")
+    @JsonManagedReference(value = "userEvents")
     private List<Event> events;
 
-
+    public boolean addOrRemoveRole(Role role) {
+        return roles.contains(role) ? roles.remove(role) : roles.add(role);
+    }
 }

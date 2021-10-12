@@ -1,4 +1,3 @@
--- CREATE EXTENSION btree_gist;
 DROP TABLE IF EXISTS user_role;
 DROP TABLE IF EXISTS room CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
@@ -38,8 +37,6 @@ CREATE TABLE event
 (
     id                  INTEGER PRIMARY KEY DEFAULT nextval('global_seq'),
     description         VARCHAR                             NOT NULL,
---     start_event         TIMESTAMP                           NOT NULL,
---     end_event           TIMESTAMP                           NOT NULL,
     is_accepted         BOOLEAN             DEFAULT FALSE   NOT NULL,
     room_id             INTEGER                             NOT NULL,
     user_id             INTEGER                             NOT NULL,
