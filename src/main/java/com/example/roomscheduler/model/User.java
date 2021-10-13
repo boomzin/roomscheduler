@@ -34,6 +34,7 @@ public class User extends AbstractBaseEntity{
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     @JsonManagedReference(value = "userEvents")
+    @OrderBy("duration ASC")
     private List<Event> events;
 
     public boolean addOrRemoveRole(Role role) {

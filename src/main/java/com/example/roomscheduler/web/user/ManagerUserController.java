@@ -21,7 +21,7 @@ import java.util.List;
 public class ManagerUserController {
     static final String REST_URL = "/api/manager/users";
 
-    protected UserRepository repository;
+    private UserRepository repository;
 
     @GetMapping("/{id}")
     public ResponseEntity<User> get(@PathVariable int id) {
@@ -38,7 +38,6 @@ public class ManagerUserController {
     @GetMapping("/{id}/with-events")
     public ResponseEntity<User> getWithVotes(@PathVariable int id) {
         log.info("get user with events {}", id);
-        User user = repository.getWithEvents(id).get();
         return ResponseEntity.of(repository.getWithEvents(id));
     }
 //todo: filter user role

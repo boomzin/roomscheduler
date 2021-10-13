@@ -21,14 +21,14 @@ public class EventSerializer extends StdSerializer<Event> {
     @Override
     public void serialize(
             Event value, JsonGenerator jsonGenerator, SerializerProvider provider)
-            throws IOException, JsonProcessingException {
+            throws IOException {
 
         jsonGenerator.writeStartObject();
         jsonGenerator.writeNumberField("id", value.getId());
         jsonGenerator.writeStringField("description", value.getDescription());
         jsonGenerator.writeStringField("duration.lower", value.getDuration().lower().toString().replace("T", " "));
         jsonGenerator.writeStringField("duration.upper", value.getDuration().upper().toString().replace("T", " "));
-        jsonGenerator.writeStringField("room.description", String.valueOf(value.getRoom().getId()));
+        jsonGenerator.writeStringField("room.description", String.valueOf(value.getRoom().getDescription()));
         jsonGenerator.writeBooleanField("isAccepted", value.isAccepted());
         jsonGenerator.writeEndObject();
     }

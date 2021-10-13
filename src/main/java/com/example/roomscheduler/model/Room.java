@@ -25,5 +25,6 @@ public class Room extends AbstractBaseEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "room")
     @JsonManagedReference(value = "roomEvents")
+    @OrderBy("duration ASC")
     private List<Event> events;
 }
