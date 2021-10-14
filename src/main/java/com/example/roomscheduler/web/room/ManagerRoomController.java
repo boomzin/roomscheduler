@@ -15,6 +15,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+import static com.example.roomscheduler.util.ValidationUtil.assureIdConsistent;
+import static com.example.roomscheduler.util.ValidationUtil.checkNew;
+
 @RestController
 @RequestMapping(value = ManagerRoomController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
@@ -60,11 +63,12 @@ public class ManagerRoomController {
         return ResponseEntity.of(roomRepository.getWithEventsUpFromNow(id));
     }
 
-    //todo: add check is new
+    //todo: add validation - unique room description
     @Transactional
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Room> createWithLocation(@RequestBody Room room) {
         log.info("create room id {}, description {}", room.getId(), room.getDescription());
+        checkNew(room);
         Room created = roomRepository.save(room);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
@@ -72,12 +76,12 @@ public class ManagerRoomController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
-//    todo: does`t work, fix
     @Transactional
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@RequestBody Room room, @PathVariable int id) {
         log.info("update room with id={}", id);
+        assureIdConsistent(room, id);
         roomRepository.save(room);
     }
 
