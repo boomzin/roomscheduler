@@ -1,8 +1,11 @@
 package com.example.roomscheduler.util;
 
 import com.example.roomscheduler.error.IllegalRequestDataException;
+import com.example.roomscheduler.error.NotFoundException;
 import com.example.roomscheduler.model.AbstractBaseEntity;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class ValidationUtil {
 
     public static void checkNew(AbstractBaseEntity bean) {
@@ -19,4 +22,9 @@ public class ValidationUtil {
         }
     }
 
+    public static void checkModification(int count, int id) {
+        if (count == 0) {
+            throw new NotFoundException("Entity with id=" + id + " not found");
+        }
+    }
 }

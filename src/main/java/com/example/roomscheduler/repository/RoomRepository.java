@@ -3,11 +3,14 @@ package com.example.roomscheduler.repository;
 import com.example.roomscheduler.model.Room;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.example.roomscheduler.util.ValidationUtil.checkModification;
 
 @Transactional(readOnly = true)
 public interface RoomRepository extends JpaRepository<Room, Integer> {
@@ -37,4 +40,13 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
 
     @Query("SELECT DISTINCT r FROM Room r JOIN FETCH r.events e WHERE e.isAccepted=TRUE AND upper(e.duration) > current_timestamp ORDER BY r.description")
     List<Room> getAllWithAcceptedEventsUpFromNow();
+
+    @Modifying
+    @Query("DELETE FROM Room r WHERE r.id=:id")
+    int delete(int id);
+
+    @Transactional
+    default void deleteExisted(int id) {
+        checkModification(delete(id), id);
+    }
 }

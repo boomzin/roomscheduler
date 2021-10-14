@@ -85,4 +85,10 @@ public class ManagerRoomController {
         roomRepository.save(room);
     }
 
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable int id) {
+        log.info("delete room {}", id);
+        roomRepository.deleteExisted(id);
+    }
 }
