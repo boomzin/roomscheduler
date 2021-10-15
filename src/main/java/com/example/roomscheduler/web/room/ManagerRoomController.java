@@ -40,9 +40,9 @@ public class ManagerRoomController {
     }
 
     @GetMapping("with-actual-events")
-    public List<Room> getAllWithEventsUpFromNow() {
+    public List<Room> getAllWithEventsActualEvents() {
         log.info("get all rooms with events");
-        return roomRepository.getAllWithEventsUpFromNow();
+        return roomRepository.getAllWithEventsActualEvents();
     }
 
     @GetMapping("/{id}")
@@ -58,9 +58,9 @@ public class ManagerRoomController {
     }
 
     @GetMapping("/{id}/with-actual-events")
-    public ResponseEntity<Room> getWithEventsUpFromNow(@PathVariable int id) {
+    public ResponseEntity<Room> getWithEventsActualEvents(@PathVariable int id) {
         log.info("get room id {} with events", id);
-        return ResponseEntity.of(roomRepository.getWithEventsUpFromNow(id));
+        return ResponseEntity.of(roomRepository.getWithEventsActualEvents(id));
     }
 
     //todo: add validation - unique room description

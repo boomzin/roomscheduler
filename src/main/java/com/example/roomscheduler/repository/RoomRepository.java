@@ -20,10 +20,10 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     Optional<Room> getWithEvents(int id);
 
     @Query("SELECT r FROM Room r JOIN FETCH r.events e WHERE r.id=?1 AND upper(e.duration) > current_timestamp")
-    Optional<Room> getWithEventsUpFromNow(int id);
+    Optional<Room> getWithEventsActualEvents(int id);
 
     @Query("SELECT DISTINCT r FROM Room r JOIN FETCH r.events e WHERE upper(e.duration) > current_timestamp ORDER BY r.description")
-    List<Room> getAllWithEventsUpFromNow();
+    List<Room> getAllWithEventsActualEvents();
 
     @EntityGraph(attributePaths = {"events"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT r FROM Room r ORDER BY r.description")
@@ -33,13 +33,13 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     Optional<Room> getWithAcceptedEvents(int id);
 
     @Query("SELECT r FROM Room r JOIN FETCH r.events e WHERE r.id=?1 AND upper(e.duration) > current_timestamp AND e.isAccepted = TRUE")
-    Optional<Room> getWithAcceptedEventsUpFromNow(int id);
+    Optional<Room> getWithAcceptedEventsActualEvents(int id);
 
     @Query("SELECT DISTINCT r FROM Room r JOIN FETCH r.events e WHERE e.isAccepted=TRUE ORDER BY r.description")
     List<Room> getAllWithAcceptedEvents();
 
     @Query("SELECT DISTINCT r FROM Room r JOIN FETCH r.events e WHERE e.isAccepted=TRUE AND upper(e.duration) > current_timestamp ORDER BY r.description")
-    List<Room> getAllWithAcceptedEventsUpFromNow();
+    List<Room> getAllWithAcceptedEventsActualEvents();
 
     @Modifying
     @Query("DELETE FROM Room r WHERE r.id=:id")

@@ -37,9 +37,9 @@ public class RoomController {
 
     //todo: authorized user should be able to see his own not accepted events
     @GetMapping("with-accepted-actual-events")
-    public List<Room> getAllWithAcceptedEventsUpFromNow() {
+    public List<Room> getAllWithAcceptedEventsActualEvents() {
         log.info("get all rooms with accepted events");
-        return roomRepository.getAllWithAcceptedEventsUpFromNow();
+        return roomRepository.getAllWithAcceptedEventsActualEvents();
     }
 
     @GetMapping("/{id}")
@@ -56,8 +56,8 @@ public class RoomController {
 
     //todo: authorized user should be able to see his own not accepted events
     @GetMapping("/{id}/with-accepted-actual-events")
-    public ResponseEntity<Room> getWithAcceptedEventsUpFromNow(@PathVariable int id) {
+    public ResponseEntity<Room> getWithAcceptedEventsActualEvents(@PathVariable int id) {
         log.info("get room id {} with accepted actual events", id);
-        return ResponseEntity.of(roomRepository.getWithAcceptedEventsUpFromNow(id));
+        return ResponseEntity.of(roomRepository.getWithAcceptedEventsActualEvents(id));
     }
 }
