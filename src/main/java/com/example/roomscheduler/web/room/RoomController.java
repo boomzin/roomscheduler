@@ -29,17 +29,17 @@ public class RoomController {
         return roomRepository.findAll(Sort.by(Sort.Direction.ASC, "description"));
     }
 
-    @GetMapping("with-accepted-events")
-    public List<Room> getAllWithAcceptedEvents() {
-        log.info("get all rooms with accepted events");
-        return roomRepository.getAllWithAcceptedEvents();
+    @GetMapping("with-confirmed-events")
+    public List<Room> getAllWithConfirmedEvents() {
+        log.info("get all rooms with confirmed events");
+        return roomRepository.getAllWithConfirmedEvents();
     }
 
-    //todo: authorized user should be able to see his own not accepted events
-    @GetMapping("with-accepted-actual-events")
-    public List<Room> getAllWithAcceptedEventsActualEvents() {
-        log.info("get all rooms with accepted events");
-        return roomRepository.getAllWithAcceptedEventsActualEvents();
+    //todo: authorized user should be able to see his own not Confirmed events
+    @GetMapping("with-confirmed-actual-events")
+    public List<Room> getAllWithConfirmedEventsActualEvents() {
+        log.info("get all rooms with confirmed events");
+        return roomRepository.getAllWithConfirmedEventsActualEvents();
     }
 
     @GetMapping("/{id}")
@@ -48,16 +48,16 @@ public class RoomController {
         return ResponseEntity.of(roomRepository.findById(id));
     }
 
-    @GetMapping("/{id}/with-accepted-events")
-    public ResponseEntity<Room> getWithAcceptedEvents(@PathVariable int id) {
-        log.info("get room id {} with accepted events", id);
-        return ResponseEntity.of(roomRepository.getWithAcceptedEvents(id));
+    @GetMapping("/{id}/with-confirmed-events")
+    public ResponseEntity<Room> getWithConfirmedEvents(@PathVariable int id) {
+        log.info("get room id {} with confirmed events", id);
+        return ResponseEntity.of(roomRepository.getWithConfirmedEvents(id));
     }
 
-    //todo: authorized user should be able to see his own not accepted events
-    @GetMapping("/{id}/with-accepted-actual-events")
-    public ResponseEntity<Room> getWithAcceptedEventsActualEvents(@PathVariable int id) {
-        log.info("get room id {} with accepted actual events", id);
-        return ResponseEntity.of(roomRepository.getWithAcceptedEventsActualEvents(id));
+    //todo: authorized user should be able to see his own not Confirmed events
+    @GetMapping("/{id}/with-confirmed-actual-events")
+    public ResponseEntity<Room> getWithConfirmedEventsActualEvents(@PathVariable int id) {
+        log.info("get room id {} with confirmed actual events", id);
+        return ResponseEntity.of(roomRepository.getWithConfirmedEventsActualEvents(id));
     }
 }

@@ -29,17 +29,17 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     @Query("SELECT r FROM Room r ORDER BY r.description")
     List<Room> getAllWithEvents();
 
-    @Query("SELECT r FROM Room r JOIN FETCH r.events e WHERE r.id=?1 AND e.isAccepted=TRUE")
-    Optional<Room> getWithAcceptedEvents(int id);
+    @Query("SELECT r FROM Room r JOIN FETCH r.events e WHERE r.id=?1 AND e.status='CONFIRMED'")
+    Optional<Room> getWithConfirmedEvents(int id);
 
-    @Query("SELECT r FROM Room r JOIN FETCH r.events e WHERE r.id=?1 AND upper(e.duration) > current_timestamp AND e.isAccepted = TRUE")
-    Optional<Room> getWithAcceptedEventsActualEvents(int id);
+    @Query("SELECT r FROM Room r JOIN FETCH r.events e WHERE r.id=?1 AND upper(e.duration) > current_timestamp AND e.status='CONFIRMED'")
+    Optional<Room> getWithConfirmedEventsActualEvents(int id);
 
-    @Query("SELECT DISTINCT r FROM Room r JOIN FETCH r.events e WHERE e.isAccepted=TRUE ORDER BY r.description")
-    List<Room> getAllWithAcceptedEvents();
+    @Query("SELECT DISTINCT r FROM Room r JOIN FETCH r.events e WHERE e.status='CONFIRMED' ORDER BY r.description")
+    List<Room> getAllWithConfirmedEvents();
 
-    @Query("SELECT DISTINCT r FROM Room r JOIN FETCH r.events e WHERE e.isAccepted=TRUE AND upper(e.duration) > current_timestamp ORDER BY r.description")
-    List<Room> getAllWithAcceptedEventsActualEvents();
+    @Query("SELECT DISTINCT r FROM Room r JOIN FETCH r.events e WHERE e.status='CONFIRMED' AND upper(e.duration) > current_timestamp ORDER BY r.description")
+    List<Room> getAllWithConfirmedEventsActualEvents();
 
     @Modifying
     @Query("DELETE FROM Room r WHERE r.id=:id")

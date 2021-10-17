@@ -30,8 +30,9 @@ public class Event extends AbstractBaseEntity {
     @Column(name = "duration", columnDefinition = "daterange")
     private Range<LocalDateTime> duration;
 
-    @Column(name = "is_accepted")
-    private boolean isAccepted;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference(value = "roomEvents")

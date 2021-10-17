@@ -3,6 +3,7 @@ package com.example.roomscheduler.web.event;
 import com.example.roomscheduler.error.IllegalRequestDataException;
 import com.example.roomscheduler.model.Event;
 import com.example.roomscheduler.model.Room;
+import com.example.roomscheduler.model.Status;
 import com.example.roomscheduler.repository.EventRepository;
 import com.example.roomscheduler.repository.RoomRepository;
 import com.example.roomscheduler.to.EventTo;
@@ -47,15 +48,15 @@ public class EventController {
         return eventRepository.getAllActualEvents();
     }
 
-    @GetMapping("accepted-actual")
-    public List<Event> getAllAcceptedActual() {
-        log.info("get all accepted actual events");
-        return eventRepository.getAllAcceptedActualEvents();
+    @GetMapping("confirmed-actual")
+    public List<Event> getAllConfirmedActual() {
+        log.info("get all Confirmed actual events");
+        return eventRepository.getAllConfirmedActualEvents();
     }
 
     @GetMapping("actual-with-own")
     public List<Event> getAllActualForUser(@AuthenticationPrincipal AuthUser authUser) {
-        log.info("get all accepted actual events with actual events for user id");
+        log.info("get all Confirmed actual events with actual events for user id");
         return eventRepository.getAllActualEventsForUser(authUser.id());
     }
 
@@ -70,6 +71,7 @@ public class EventController {
         newEvent.setDuration(duration);
         newEvent.setUser(authUser.getUser());
         newEvent.setRoom(room);
+        newEvent.setStatus(Status.STATELESS);
         Event created = eventRepository.save(newEvent);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
@@ -82,7 +84,7 @@ public class EventController {
     public void update(@RequestBody EventTo eventTo, @AuthenticationPrincipal AuthUser authUser, @PathVariable("id") int eventId) {
         log.info("user {} update event {}", authUser.getUser().getId(), eventId);
         Event updatedEvent = eventRepository.checkBelong(eventId, authUser.id());
-        if (updatedEvent.isAccepted()) {
+        if ("CONFIRMED".equals(updatedEvent.getStatus().name())) {
             throw new IllegalRequestDataException("Confirmed events are unavailable to update." +
                     "To change a confirmed event, delete it " + eventId + " and create new one");
         }
@@ -118,7 +120,7 @@ public class EventController {
         Range duration = Range.closedOpen(eventTo.getLower(), eventTo.getUpper());
         List<Integer> intersections = eventRepository.getIntersections(eventTo.getRoomId(), duration.asString());
         if (intersections.size() > 0) {
-            throw new IllegalRequestDataException("The timing of the event has intersection with events, which already have been accepted in this room: "
+            throw new IllegalRequestDataException("The timing of the event has intersection with events, which already have been confirmed in this room: "
                     + intersections.stream()
                     .map(Object::toString)
                     .collect(Collectors.joining(", ")));

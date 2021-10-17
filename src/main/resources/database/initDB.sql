@@ -2,9 +2,12 @@ DROP TABLE IF EXISTS user_role;
 DROP TABLE IF EXISTS room CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS event;
+DROP TYPE  IF EXISTS status CASCADE ;
 DROP SEQUENCE IF EXISTS global_seq;
 
 CREATE SEQUENCE global_seq START WITH 100000;
+
+CREATE TYPE status AS ENUM ('STATELESS', 'CONFIRMED', 'REJECTED');
 
 CREATE TABLE users
 (
@@ -36,13 +39,14 @@ CREATE UNIQUE INDEX room_unique_description_idx ON room (description);
 CREATE TABLE event
 (
     id                  INTEGER PRIMARY KEY DEFAULT nextval('global_seq'),
-    description         VARCHAR                             NOT NULL,
-    is_accepted         BOOLEAN             DEFAULT FALSE   NOT NULL,
-    room_id             INTEGER                             NOT NULL,
-    user_id             INTEGER                             NOT NULL,
-    duration            tsrange                             NOT NULL,
-    EXCLUDE USING GIST (room_id WITH =, duration WITH &&) WHERE (is_accepted),
+    description         VARCHAR                                     NOT NULL,
+    status              status             DEFAULT 'STATELESS'      NOT NULL,
+    room_id             INTEGER                                     NOT NULL,
+    user_id             INTEGER                                     NOT NULL,
+    duration            tsrange                                     NOT NULL,
+    EXCLUDE USING GIST (room_id WITH =, duration WITH &&) WHERE (status='CONFIRMED'),
     FOREIGN KEY (room_id) REFERENCES room (id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
+CREATE CAST (character varying AS status) WITH INOUT AS ASSIGNMENT;
 

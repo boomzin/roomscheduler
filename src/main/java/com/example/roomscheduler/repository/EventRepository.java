@@ -15,21 +15,21 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
     @Query("SELECT e FROM Event e WHERE upper(e.duration) > current_timestamp")
     List<Event> getAllActualEvents();
 
-    @Query("SELECT e FROM Event e WHERE upper(e.duration) > current_timestamp AND e.isAccepted=TRUE")
-    List<Event> getAllAcceptedActualEvents();
+    @Query("SELECT e FROM Event e WHERE upper(e.duration) > current_timestamp AND e.status='CONFIRMED'")
+    List<Event> getAllConfirmedActualEvents();
 
-    @Query(value = "SELECT * FROM event e WHERE upper(e.duration) > current_timestamp AND (e.is_accepted=TRUE OR e.user_id=:id)", nativeQuery = true)
+    @Query(value = "SELECT * FROM event e WHERE upper(e.duration) > current_timestamp AND (e.status='CONFIRMED' OR e.user_id=:id)", nativeQuery = true)
     List<Event> getAllActualEventsForUser(int id);
 
-    @Query(value = "SELECT e.id FROM event e WHERE e.room_id=:roomId AND e.is_accepted=TRUE AND e.duration && CAST(:duration AS tsrange)", nativeQuery = true)
+    @Query(value = "SELECT e.id FROM event e WHERE e.room_id=:roomId AND e.status='CONFIRMED' AND e.duration && CAST(:duration AS tsrange)", nativeQuery = true)
     List<Integer> getIntersections(int roomId, String duration);
 
-    @Query(value = "SELECT e FROM Event e WHERE e.id = :id and e.user_id = :userId", nativeQuery = true)
+    @Query(value = "SELECT * FROM Event e WHERE e.id = :id and e.user_id = :userId", nativeQuery = true)
     Optional<Event> get(int id, int userId);
 
     default Event checkBelong(int id, int userId) {
         return get(id, userId).orElseThrow(
-                () -> new IllegalRequestDataException("Meal id=" + id + " doesn't belong to User id=" + userId));
+                () -> new IllegalRequestDataException("Event id=" + id + " doesn't belong to User id=" + userId));
     }
 
 }
