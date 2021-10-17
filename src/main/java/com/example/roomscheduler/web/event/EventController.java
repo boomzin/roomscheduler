@@ -50,13 +50,13 @@ public class EventController {
 
     @GetMapping("confirmed-actual")
     public List<Event> getAllConfirmedActual() {
-        log.info("get all Confirmed actual events");
+        log.info("get all confirmed actual events");
         return eventRepository.getAllConfirmedActualEvents();
     }
 
     @GetMapping("actual-with-own")
     public List<Event> getAllActualForUser(@AuthenticationPrincipal AuthUser authUser) {
-        log.info("get all Confirmed actual events with actual events for user id");
+        log.info("get all confirmed actual events with actual events for user id");
         return eventRepository.getAllActualEventsForUser(authUser.id());
     }
 
@@ -65,7 +65,7 @@ public class EventController {
     public ResponseEntity<Event> createWithLocation(@RequestBody EventTo eventTo, @AuthenticationPrincipal AuthUser authUser) {
         log.info("user {} books event for room {}", authUser.getUser().getId(), eventTo.getRoomId());
         Room room = checkAndGetRoom(eventTo);
-        Range duration = checkTimeAndGetRange(eventTo);
+        Range<LocalDateTime> duration = checkTimeAndGetRange(eventTo);
         Event newEvent = new Event();
         newEvent.setDescription(eventTo.getDescription());
         newEvent.setDuration(duration);
@@ -89,7 +89,7 @@ public class EventController {
                     "To change a confirmed event, delete it " + eventId + " and create new one");
         }
         Room room = checkAndGetRoom(eventTo);
-        Range duration = checkTimeAndGetRange(eventTo);
+        Range<LocalDateTime> duration = checkTimeAndGetRange(eventTo);
         updatedEvent.setDescription(eventTo.getDescription());
         updatedEvent.setDuration(duration);
         updatedEvent.setRoom(room);
@@ -113,17 +113,18 @@ public class EventController {
                 () -> new IllegalRequestDataException("Room with id=" + eventTo.getRoomId() + " does not exist"));
     }
 
-    private Range checkTimeAndGetRange(@RequestBody EventTo eventTo) {
+    private Range<LocalDateTime> checkTimeAndGetRange(@RequestBody EventTo eventTo) {
         if (LocalDateTime.now().isAfter(eventTo.getLower())) {
             throw new IllegalRequestDataException("The beginning of the event earlier than now");
         }
-        Range duration = Range.closedOpen(eventTo.getLower(), eventTo.getUpper());
-        List<Integer> intersections = eventRepository.getIntersections(eventTo.getRoomId(), duration.asString());
+        Range<LocalDateTime> duration = Range.closedOpen(eventTo.getLower(), eventTo.getUpper());
+        List<Integer> intersections = eventRepository.getConfirmedIntersections(eventTo.getRoomId(), duration.asString());
         if (intersections.size() > 0) {
-            throw new IllegalRequestDataException("The timing of the event has intersection with events, which already have been confirmed in this room: "
+            throw new IllegalRequestDataException("The timing of the event has intersection with events, which already have been confirmed "
                     + intersections.stream()
                     .map(Object::toString)
-                    .collect(Collectors.joining(", ")));
+                    .collect(Collectors.joining(", ")) +
+                    "in this room: " + eventTo.getRoomId());
         }
         return duration;
     }
