@@ -67,7 +67,7 @@ public class ManagerRoomController {
     @Transactional
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Room> createWithLocation(@RequestBody Room room) {
-        log.info("create room id {}, description {}", room.getId(), room.getDescription());
+        log.info("create room, description {}", room.getDescription());
         checkNew(room);
         Room created = roomRepository.save(room);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()

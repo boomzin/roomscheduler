@@ -27,7 +27,7 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
     @Query(value = "SELECT e.id FROM event e WHERE e.room_id=:roomId AND e.status='CONFIRMED' AND e.duration && CAST(:duration AS tsrange)", nativeQuery = true)
     List<Integer> getConfirmedIntersections(int roomId, String duration);
 
-    @Query(value = "SELECT * FROM event e WHERE e.room_id=:roomId AND e.status='CONFIRMED' AND e.duration && CAST(:duration AS tsrange) AND lower(e.duration) > current_timestamp", nativeQuery = true)
+    @Query(value = "SELECT * FROM event e WHERE e.room_id=:roomId AND e.status='STATELESS' AND e.duration && CAST(:duration AS tsrange) AND lower(e.duration) > current_timestamp", nativeQuery = true)
     List<Event> getActualStatelessIntersections(int roomId, String duration);
 
     @Query(value = "SELECT * FROM Event e WHERE e.id = :id and e.user_id = :userId", nativeQuery = true)

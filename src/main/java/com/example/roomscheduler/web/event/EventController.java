@@ -25,7 +25,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 @RestController
 @RequestMapping(value = EventController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
@@ -39,7 +38,7 @@ public class EventController {
     @GetMapping
     public List<Event> getAll() {
         log.info("get all events");
-        return eventRepository.findAll(Sort.by(Sort.Direction.ASC, "description"));
+        return eventRepository.findAll(Sort.by(Sort.Direction.ASC, "duration"));
     }
 
     @GetMapping("actual")
@@ -61,7 +60,7 @@ public class EventController {
     }
 
     @Transactional
-    @PostMapping()
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Event> createWithLocation(@RequestBody EventTo eventTo, @AuthenticationPrincipal AuthUser authUser) {
         log.info("user {} books event for room {}", authUser.getUser().getId(), eventTo.getRoomId());
         Room room = checkAndGetRoom(eventTo);
@@ -81,12 +80,13 @@ public class EventController {
 
     @Transactional
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@RequestBody EventTo eventTo, @AuthenticationPrincipal AuthUser authUser, @PathVariable("id") int eventId) {
         log.info("user {} update event {}", authUser.getUser().getId(), eventId);
         Event updatedEvent = eventRepository.checkBelong(eventId, authUser.id());
-        if ("CONFIRMED".equals(updatedEvent.getStatus().name())) {
+        if (Status.CONFIRMED.equals(updatedEvent.getStatus())) {
             throw new IllegalRequestDataException("Confirmed events are unavailable to update." +
-                    "To change a confirmed event, delete it " + eventId + " and create new one");
+                    " To change a confirmed event, delete it " + eventId + " and create new one");
         }
         Room room = checkAndGetRoom(eventTo);
         Range<LocalDateTime> duration = checkTimeAndGetRange(eventTo);
@@ -102,8 +102,8 @@ public class EventController {
     public void delete(@AuthenticationPrincipal AuthUser authUser, @PathVariable("id") int eventId) {
         log.info("delete event {} for user {}", eventId, authUser.id());
         Event removedEvent = eventRepository.checkBelong(eventId, authUser.id());
-        if (LocalDateTime.now().isAfter(removedEvent.getDuration().lower())) {
-            throw new IllegalRequestDataException("You cannot delete an event that has already started");
+        if (LocalDateTime.now().isAfter(removedEvent.getDuration().upper()) && Status.CONFIRMED.equals(removedEvent.getStatus())) {
+            throw new IllegalRequestDataException("You cannot delete a confirmed event that has already ended");
         }
         eventRepository.delete(removedEvent);
     }
@@ -114,8 +114,8 @@ public class EventController {
     }
 
     private Range<LocalDateTime> checkTimeAndGetRange(@RequestBody EventTo eventTo) {
-        if (LocalDateTime.now().isAfter(eventTo.getLower())) {
-            throw new IllegalRequestDataException("The beginning of the event earlier than now");
+        if (LocalDateTime.now().isAfter(eventTo.getLower()) || eventTo.getLower().isAfter(eventTo.getUpper()) || eventTo.getLower().equals(eventTo.getUpper())) {
+            throw new IllegalRequestDataException("Invalid  time bounds");
         }
         Range<LocalDateTime> duration = Range.closedOpen(eventTo.getLower(), eventTo.getUpper());
         List<Integer> intersections = eventRepository.getConfirmedIntersections(eventTo.getRoomId(), duration.asString());
@@ -124,7 +124,7 @@ public class EventController {
                     + intersections.stream()
                     .map(Object::toString)
                     .collect(Collectors.joining(", ")) +
-                    "in this room: " + eventTo.getRoomId());
+                    " in this room: " + eventTo.getRoomId());
         }
         return duration;
     }

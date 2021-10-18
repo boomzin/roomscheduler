@@ -6,6 +6,7 @@ import com.example.roomscheduler.model.Status;
 import com.example.roomscheduler.repository.EventRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -31,28 +32,31 @@ public class ManagerEventController {
 
     @Transactional
     @PatchMapping("/{id}/reject")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void reject(@PathVariable int id) {
         log.info("reject event {}", id);
         Event rejectedEvent = checkStatelessAndGet(id);
-        checkTime(rejectedEvent);
         rejectedEvent.setStatus(Status.REJECTED);
         eventRepository.save(rejectedEvent);
     }
 
     @Transactional
     @PatchMapping("/{id}/confirm")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void confirm(@PathVariable("id") int eventId) {
         log.info("confirm event {}", eventId);
         Event confirmedEvent = checkStatelessAndGet(eventId);
-        checkTime(confirmedEvent);
+        if (LocalDateTime.now().isAfter(confirmedEvent.getDuration().lower())) {
+            throw new IllegalRequestDataException("You cannot confirm event " + eventId + " that has already started");
+        }
         int roomId = eventRepository.getRoomId(eventId);
-        List<Integer> intersections = eventRepository.getConfirmedIntersections(roomId, confirmedEvent.getDuration().asString());
-        if (intersections.size() > 0) {
+        List<Integer> confirmedIntersections = eventRepository.getConfirmedIntersections(roomId, confirmedEvent.getDuration().asString());
+        if (confirmedIntersections.size() > 0) {
             throw new IllegalRequestDataException("The timing of the event has intersection with events, which already have been confirmed "
-                    + intersections.stream()
+                    + confirmedIntersections.stream()
                     .map(Object::toString)
                     .collect(Collectors.joining(", ")) +
-                    "in this room: " + roomId);
+                    " in this room: " + roomId);
         }
         List<Event> statelessIntersections = eventRepository.getActualStatelessIntersections(roomId, confirmedEvent.getDuration().asString());
         if (statelessIntersections.size() > 0) {
@@ -68,11 +72,5 @@ public class ManagerEventController {
     private Event checkStatelessAndGet(int id){
         return eventRepository.getStatelessById(id).orElseThrow(
                 () -> new IllegalRequestDataException("You can handle only stateless events. Event " + id + " has another status"));
-    }
-
-    private void checkTime(Event event) {
-        if (LocalDateTime.now().isAfter(event.getDuration().lower())) {
-            throw new IllegalRequestDataException("You cannot change an event status that has already started");
-        }
     }
 }
