@@ -40,13 +40,13 @@ public class ManagerUserController {
         log.info("get user with events {}", id);
         return ResponseEntity.of(repository.getWithEvents(id));
     }
-//todo: filter user role
+
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    public void addOrRemoveRole(@PathVariable int id, @RequestParam String role) {
+    public void addOrRemoveRole(@PathVariable int id) {
         User user = repository.getById(id);
-        Role switchedRole = Role.valueOf(role.toUpperCase());
+        Role switchedRole = Role.MANAGER;
         log.info(user.getRoles().contains(switchedRole) ? "delete role {} for {}" : "add role {} for {}", switchedRole, id);
         user.addOrRemoveRole(switchedRole);
     }

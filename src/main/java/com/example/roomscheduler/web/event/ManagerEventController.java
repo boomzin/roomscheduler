@@ -27,7 +27,7 @@ public class ManagerEventController {
     @GetMapping("/actual-stateless")
     public List<Event> getAllActualStateless() {
         log.info("get all actual stateless events");
-        return eventRepository.getAllActualStatelessEvents();
+        return eventRepository.getAllActualStateless();
     }
 
     @Transactional
@@ -69,7 +69,7 @@ public class ManagerEventController {
         eventRepository.save(confirmedEvent);
     }
 
-    private Event checkStatelessAndGet(int id){
+    private Event checkStatelessAndGet(int id) {
         return eventRepository.getStatelessById(id).orElseThrow(
                 () -> new IllegalRequestDataException("You can handle only stateless events. Event " + id + " has another status"));
     }

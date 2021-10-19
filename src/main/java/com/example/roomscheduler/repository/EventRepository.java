@@ -16,13 +16,13 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
     List<Event> getAllActualEvents();
 
     @Query("SELECT e FROM Event e WHERE lower(e.duration) > current_timestamp AND e.status='STATELESS'")
-    List<Event> getAllActualStatelessEvents();
+    List<Event> getAllActualStateless();
 
     @Query("SELECT e FROM Event e WHERE upper(e.duration) > current_timestamp AND e.status='CONFIRMED'")
-    List<Event> getAllConfirmedActualEvents();
+    List<Event> getAllConfirmedActual();
 
     @Query(value = "SELECT * FROM event e WHERE upper(e.duration) > current_timestamp AND (e.status='CONFIRMED' OR e.user_id=:id)", nativeQuery = true)
-    List<Event> getAllActualEventsForUser(int id);
+    List<Event> getAllActualForUser(int id);
 
     @Query(value = "SELECT e.id FROM event e WHERE e.room_id=:roomId AND e.status='CONFIRMED' AND e.duration && CAST(:duration AS tsrange)", nativeQuery = true)
     List<Integer> getConfirmedIntersections(int roomId, String duration);

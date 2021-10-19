@@ -51,13 +51,13 @@ public class EventController {
     @GetMapping("confirmed-actual")
     public List<Event> getAllConfirmedActual() {
         log.info("get all confirmed actual events");
-        return eventRepository.getAllConfirmedActualEvents();
+        return eventRepository.getAllConfirmedActual();
     }
 
     @GetMapping("actual-with-own")
     public List<Event> getAllActualForUser(@AuthenticationPrincipal AuthUser authUser) {
-        log.info("get all confirmed actual events with actual events for user id");
-        return eventRepository.getAllActualEventsForUser(authUser.id());
+        log.info("get all confirmed actual events with any status actual events for user id {}", authUser.id());
+        return eventRepository.getAllActualForUser(authUser.id());
     }
 
     @Transactional

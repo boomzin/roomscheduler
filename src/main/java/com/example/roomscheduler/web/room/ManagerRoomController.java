@@ -48,9 +48,9 @@ public class ManagerRoomController {
     }
 
     @GetMapping("with-actual-events")
-    public List<Room> getAllWithEventsActualEvents() {
+    public List<Room> getAllWithActualEvents() {
         log.info("get all rooms with events");
-        return roomRepository.getAllWithEventsActualEvents();
+        return roomRepository.getAllWithActualEvents();
     }
 
     @GetMapping("/{id}")
