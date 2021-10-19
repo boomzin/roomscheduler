@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -61,7 +62,7 @@ public class EventController {
 
     @Transactional
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Event> createWithLocation(@RequestBody EventTo eventTo, @AuthenticationPrincipal AuthUser authUser) {
+    public ResponseEntity<Event> createWithLocation(@Valid @RequestBody EventTo eventTo, @AuthenticationPrincipal AuthUser authUser) {
         log.info("user {} books event for room {}", authUser.getUser().getId(), eventTo.getRoomId());
         Room room = checkAndGetRoom(eventTo);
         Range<LocalDateTime> duration = checkTimeAndGetRange(eventTo);

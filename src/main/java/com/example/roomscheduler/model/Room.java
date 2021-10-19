@@ -5,8 +5,7 @@ import lombok.Getter;
 import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.List;
 
 @Entity
@@ -15,7 +14,7 @@ import java.util.List;
 public class Room extends AbstractBaseEntity {
 
     @NotBlank
-    @Size(min = 2, max = 128)
+    @Size(min = 2, max = 60)
     @Column(name = "description", nullable = false, unique = true)
     private String description;
 

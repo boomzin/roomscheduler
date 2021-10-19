@@ -2,6 +2,7 @@ package com.example.roomscheduler.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
+import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -12,7 +13,7 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @Getter
-public class User extends AbstractBaseEntity{
+public class User extends AbstractBaseEntity {
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -21,6 +22,7 @@ public class User extends AbstractBaseEntity{
     private String email;
 
     @Column(name = "password", nullable = false)
+    @ToString.Exclude
     private String password;
 
     @Enumerated(EnumType.STRING)

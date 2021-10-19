@@ -22,6 +22,9 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     @Query("SELECT r FROM Room r JOIN FETCH r.events e WHERE r.id=?1 AND upper(e.duration) > current_timestamp")
     Optional<Room> getWithEventsActualEvents(int id);
 
+    @Query("SELECT r FROM Room r WHERE r.description=?1")
+    Optional<Room> getByDescription(String description);
+
     @Query("SELECT DISTINCT r FROM Room r JOIN FETCH r.events e WHERE upper(e.duration) > current_timestamp ORDER BY r.description")
     List<Room> getAllWithEventsActualEvents();
 

@@ -9,9 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -26,6 +28,12 @@ public class ManagerRoomController {
     static final String REST_URL = "/api/manager/rooms";
 
     private RoomRepository roomRepository;
+    private UniqueDescriptionValidator descriptionValidator;
+
+    @InitBinder
+    protected void initBinder(WebDataBinder binder) {
+        binder.addValidators(descriptionValidator);
+    }
 
     @GetMapping
     public List<Room> getAll() {
@@ -63,10 +71,9 @@ public class ManagerRoomController {
         return ResponseEntity.of(roomRepository.getWithEventsActualEvents(id));
     }
 
-    //todo: add validation - unique room description
     @Transactional
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Room> createWithLocation(@RequestBody Room room) {
+    public ResponseEntity<Room> createWithLocation(@Valid @RequestBody Room room) {
         log.info("create room, description {}", room.getDescription());
         checkNew(room);
         Room created = roomRepository.save(room);
@@ -79,7 +86,7 @@ public class ManagerRoomController {
     @Transactional
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@RequestBody Room room, @PathVariable int id) {
+    public void update(@Valid @RequestBody Room room, @PathVariable int id) {
         log.info("update room with id={}", id);
         assureIdConsistent(room, id);
         roomRepository.save(room);

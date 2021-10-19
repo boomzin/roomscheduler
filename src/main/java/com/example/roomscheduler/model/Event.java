@@ -40,5 +40,5 @@ public class Event extends AbstractBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference(value = "userEvents")
-    private User user ;
+    private User user;
 }
