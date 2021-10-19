@@ -31,8 +31,8 @@ CREATE TABLE room
     id                  INTEGER PRIMARY KEY DEFAULT nextval('global_seq'),
     description         VARCHAR                             NOT NULL,
     capacity            INTEGER                             NOT NULL,
-    is_has_projector    BOOLEAN             DEFAULT FALSE   NOT NULL,
-    is_has_white_board  BOOLEAN             DEFAULT FALSE   NOT NULL
+    has_projector       BOOLEAN             DEFAULT FALSE   NOT NULL,
+    has_white_board     BOOLEAN             DEFAULT FALSE   NOT NULL
 );
 CREATE UNIQUE INDEX room_unique_description_idx ON room (description);
 

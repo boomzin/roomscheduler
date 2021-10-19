@@ -17,7 +17,7 @@ VALUES ('USER', 100000),
        ('USER', 100003),
        ('MANAGER', 100003);
 
-INSERT INTO room (description, capacity, is_has_projector, is_has_white_board)
+INSERT INTO room (description, capacity, has_projector, has_white_board)
 VALUES ('Conference hall', 30, TRUE, TRUE),
        ('Meeting room 1', 10, FALSE, TRUE),
        ('Meeting room 2', 20, TRUE, FALSE);

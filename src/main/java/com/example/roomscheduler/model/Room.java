@@ -2,8 +2,11 @@ package com.example.roomscheduler.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
+import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
@@ -11,17 +14,20 @@ import java.util.List;
 @Getter
 public class Room extends AbstractBaseEntity {
 
+    @NotBlank
+    @Size(min = 2, max = 128)
     @Column(name = "description", nullable = false, unique = true)
     private String description;
 
     @Column(name = "capacity", nullable = false)
+    @Range(min = 2, max = 100)
     private int capacity;
 
-    @Column(name = "is_has_projector")
-    private boolean isHasProjector;
+    @Column(name = "has_projector")
+    private boolean hasProjector;
 
-    @Column(name = "is_has_white_board")
-    private boolean isHasWhiteBoard;
+    @Column(name = "has_white_board")
+    private boolean hasWhiteBoard;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "room")
     @JsonManagedReference(value = "roomEvents")
