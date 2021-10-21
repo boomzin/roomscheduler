@@ -1,8 +1,7 @@
 package com.example.roomscheduler.model;
 
-import com.example.roomscheduler.util.EventSerializer;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.vladmihalcea.hibernate.type.range.PostgreSQLRangeType;
 import com.vladmihalcea.hibernate.type.range.Range;
 import lombok.Getter;
@@ -21,12 +20,12 @@ import java.time.LocalDateTime;
         typeClass = PostgreSQLRangeType.class,
         defaultForType = Range.class
 )
-@JsonSerialize(using = EventSerializer.class)
 public class Event extends AbstractBaseEntity {
 
     @Column(name = "description")
     private String description;
 
+    @JsonUnwrapped
     @Column(name = "duration", columnDefinition = "daterange")
     private Range<LocalDateTime> duration;
 
