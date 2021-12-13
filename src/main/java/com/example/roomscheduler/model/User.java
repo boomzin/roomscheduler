@@ -1,7 +1,9 @@
 package com.example.roomscheduler.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -13,6 +15,7 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @Getter
+@Setter
 public class User extends AbstractBaseEntity {
 
     @Column(name = "name", nullable = false)
@@ -23,6 +26,7 @@ public class User extends AbstractBaseEntity {
 
     @Column(name = "password", nullable = false)
     @ToString.Exclude
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Enumerated(EnumType.STRING)

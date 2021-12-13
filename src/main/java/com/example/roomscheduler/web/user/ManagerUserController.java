@@ -36,7 +36,7 @@ public class ManagerUserController {
     }
 
     @GetMapping("/{id}/with-events")
-    public ResponseEntity<User> getWithVotes(@PathVariable int id) {
+    public ResponseEntity<User> getWithEvents(@PathVariable int id) {
         log.info("get user with events {}", id);
         return ResponseEntity.of(repository.getWithEvents(id));
     }

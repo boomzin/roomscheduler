@@ -1,16 +1,16 @@
 package com.example.roomscheduler.repository;
 
 import com.example.roomscheduler.model.Room;
-import org.springframework.data.jpa.repository.*;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.roomscheduler.util.ValidationUtil.checkModification;
-
 @Transactional(readOnly = true)
-public interface RoomRepository extends JpaRepository<Room, Integer>, JpaSpecificationExecutor<Room> {
+public interface RoomRepository extends BaseRepository<Room>, JpaSpecificationExecutor<Room> {
 
     @EntityGraph(attributePaths = {"events"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT r FROM Room r WHERE r.id=?1")
@@ -34,13 +34,4 @@ public interface RoomRepository extends JpaRepository<Room, Integer>, JpaSpecifi
     @EntityGraph(attributePaths = {"events"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT r FROM Room r ORDER BY r.description")
     List<Room> getAllWithEvents();
-
-    @Modifying
-    @Query("DELETE FROM Room r WHERE r.id=:id")
-    int delete(int id);
-
-    @Transactional
-    default void deleteExisted(int id) {
-        checkModification(delete(id), id);
-    }
 }

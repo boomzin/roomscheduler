@@ -2,7 +2,6 @@ package com.example.roomscheduler.repository;
 
 import com.example.roomscheduler.error.IllegalRequestDataException;
 import com.example.roomscheduler.model.Event;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Transactional(readOnly = true)
-public interface EventRepository extends JpaRepository<Event, Integer> {
+public interface EventRepository extends BaseRepository<Event> {
 
     @Query("SELECT e FROM Event e WHERE upper(e.duration) > current_timestamp")
     List<Event> getAllActualEvents();
