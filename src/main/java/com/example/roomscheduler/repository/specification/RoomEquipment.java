@@ -30,9 +30,7 @@ public class RoomEquipment implements Specification<Room> {
         for (SearchCriteria criteria : searchCriteriaList) {
             if (criteria.getKey().equalsIgnoreCase("capacity")) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(criteria.getKey()), criteria.getValue().toString()));
-            } else if (criteria.getKey().equalsIgnoreCase("hasProjector")) {
-                predicates.add(criteriaBuilder.equal(root.get(criteria.getKey()), criteria.getValue()));
-            } else if (criteria.getKey().equalsIgnoreCase("hasWhiteBoard")) {
+            } else {
                 predicates.add(criteriaBuilder.equal(root.get(criteria.getKey()), criteria.getValue()));
             }
         }
