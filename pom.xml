@@ -14,7 +14,7 @@
     <name>roomscheduler</name>
     <description>roomscheduler</description>
     <properties>
-        <java.version>11</java.version>
+<!--        <java.version>11</java.version>-->
         <springdoc.version>1.5.10</springdoc.version>
     </properties>
     <dependencies>
